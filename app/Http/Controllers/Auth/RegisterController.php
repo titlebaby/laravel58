@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Jobs\ProcessVerifyEmail;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -64,9 +69,37 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'activity_token'  => Str::random(60),
+            'activity_expire' => Date::now('+1 days'),
+            'name'            => $data['name'],
+            'email'           => $data['email'],
+            'password'        => Hash::make($data['password']),
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        $user = $this->create($request->all());
+        //触发事件??次处的事件没有起效？？？
+       // event(new Registered($user));
+        //分发任务
+        ProcessVerifyEmail::dispatch($user);
+        //显示注册激活提示信息
+        return view('auth.registed',['user'=>$user]);
+    }
+
+    function activity($token){
+        $user = User::where(['activity_token'=>$token])->first();
+        if(!$user) {
+            return ['令牌错误'];
+        }
+        $res = false;
+        if($user && strtotime($user->activity_expire)>time())
+        {
+            $user->is_activity = 1;
+            $res = $user->save();
+        }
+        return view('auth.activityres',['res'=>$res]);
     }
 }

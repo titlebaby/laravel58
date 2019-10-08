@@ -38,6 +38,17 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    protected function attemptLogin(Request $request)
+    {
+        return $this->guard()->attempt(
+            [
+                'email'=>$request->email,
+                'password'=>$request->password,
+                'is_activity'=>1,
+            ], $request->filled('remember')
+        );
+    }
+
 
 //    public function username()
 //    {

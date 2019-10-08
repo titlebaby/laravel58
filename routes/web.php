@@ -29,6 +29,11 @@ Route::get('profile', function () {
 })->middleware('auth');
 
 
+//
+Route::get('activity/{token}','Auth\RegisterController@activity')
+    ->name('user.activity');
+
+
 /*
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
