@@ -34,6 +34,8 @@ Route::get('activity/{token}','Auth\RegisterController@activity')
     ->name('user.activity');
 
 
+Route::get('activity/{token}','Auth\RegisterController@activity')
+    ->name('verification.verify');
 /*
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');

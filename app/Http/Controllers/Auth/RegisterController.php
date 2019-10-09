@@ -82,9 +82,9 @@ class RegisterController extends Controller
         $this->validator($request->all())->validate();
         $user = $this->create($request->all());
         //触发事件??次处的事件没有起效？？？
-       // event(new Registered($user));
+        event(new Registered($user));
         //分发任务
-        ProcessVerifyEmail::dispatch($user);
+        //ProcessVerifyEmail::dispatch($user);
         //显示注册激活提示信息
         return view('auth.registed',['user'=>$user]);
     }
