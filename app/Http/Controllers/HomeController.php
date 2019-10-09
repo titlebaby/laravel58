@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessVerifyEmail;
 use App\Model\Invoice;
 use App\Notifications\InvoicePaid;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,10 +36,21 @@ class HomeController extends Controller
     }
 
 
+    /**
+     *消息通知
+     */
     public function shopping(){
         $user = User::find(1);
         $invoice = Invoice::where(['user_id'=>$user->id])->first();
         $user->notify(new InvoicePaid($invoice));
+
+    }
+
+    public function redisQueue(){
+
+        $user = User::find(1);
+
+        ProcessVerifyEmail::dispatch($user)->delay(now()->addMinutes(2));
 
     }
 }
