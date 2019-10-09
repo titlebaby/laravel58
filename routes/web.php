@@ -36,6 +36,9 @@ Route::get('activity/{token}','Auth\RegisterController@activity')
 
 Route::get('activity/{token}','Auth\RegisterController@activity')
     ->name('verification.verify');
+
+//测试通过邮件渠道发送消费通知
+Route::get('/shopping', 'HomeController@shopping');
 /*
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
