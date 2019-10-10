@@ -74,4 +74,18 @@ return $this->success(new UserResource($user));
 return UserResource::collection($users);
 ```
 
+### 统一response格式
+1. 构建统一response的基类
+2. 继承基类
+2.1 统一管理资源中类似枚举型的字段，使用viewModel
+3. 构建异常错误处理，根据"统一response的基类"的格式返回，即调用继承基类
+4. 拦截exception的异常，到构建的异常处理类中。拦截，即为：修改 app/Exceptions 目录下的 Handler.php 文件的render方法。
+postman设置为ajax请求，可在header中进行设置
+```$xslt
+X-Requested-With:XMLHttpRequest
+```
+
+
+
+
 
