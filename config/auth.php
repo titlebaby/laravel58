@@ -66,9 +66,15 @@ return [
     */
 
     'providers' => [
+// 屏蔽原始配置
+//        'users' => [
+//            'driver' => 'eloquent',
+//            'model' => App\User::class,
+//        ],
+
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\ApiUser::class,
         ],
 
         // 'users' => [

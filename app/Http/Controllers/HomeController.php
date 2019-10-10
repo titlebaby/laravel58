@@ -54,7 +54,7 @@ class HomeController extends Controller
      *      查看redis中队列键 ：keys *
      * 3、 启动队列处理：（清晰的看到处理过程，成功还是失败）
      *          php artisan queue:work  --tries=3
-     * 
+     *
      * 安卓redis扩展
      * composer require predis/predis
      * 终端翻墙
