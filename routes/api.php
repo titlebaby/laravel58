@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::namespace('Api')->prefix('v1')->middleware('cors')->group(function () {
     //Route::get('/users','UserController@index')->name('users.index');
 
+    Route::get('/users/info','UserController@info')->name('users.info');
 
     Route::get('/users','UserController@index')->name('users.index');
     Route::get('/users/{user}','UserController@show')->name('users.show');

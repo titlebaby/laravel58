@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
-class ApiUser extends  Authenticatable
+class ApiUser extends  Authenticatable implements JWTSubject
 {
     use Notifiable;
     protected $table = 'api_users';
@@ -25,6 +26,20 @@ class ApiUser extends  Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    /**
+     * 必须实现接口
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
 }
