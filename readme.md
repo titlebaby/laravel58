@@ -59,6 +59,19 @@ composer require medz/cors
   #应用文档具体查看
 https://learnku.com/articles/25947#bef49e
 ```
+### ViewModel 资源转换未数组
+1. 新建资源文件
+```$xslt
+# 在http目录下张近东生成 resouces文件夹
+php artisan make:resource Api/UserResource
+```
+2. 控制层，输出调用资源层
+```$xslt
+#返回单一的资源
+return $this->success(new UserResource($user));
+#返回资源列表
 
+return UserResource::collection($users);
+```
 
 
