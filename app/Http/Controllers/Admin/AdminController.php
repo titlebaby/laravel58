@@ -40,11 +40,21 @@ class AdminController extends BaseController
     //用户登录
     public function login(Request $request)
     {
-        $token = Auth::guard('admin')->attempt(
-            ['name' => $request->name,
-             'password' => $request->password
-            ]
-        );
+        // 自动区分gard
+//        $token = Auth::guard('admin')->attempt(
+//            ['name' => $request->name,
+//             'password' => $request->password
+//            ]
+//        );
+        //获取当前守护的名称
+        $present_guard =Auth::getDefaultDriver();
+        // token的载荷信息中加入标志
+        $token = Auth::claims(['guard'=>$present_guard])
+            ->attempt(
+                [
+                    'name' => $request->name,
+                    'password' => $request->password
+                ]);
 
         if ($token) {
            // return $this->success('用户登录成功...');
@@ -68,7 +78,9 @@ class AdminController extends BaseController
 
     //返回当前登录用户信息
     public function info(){
-        $user = Auth::guard('admin')->user();
+        //$user = Auth::guard('admin')->user();
+        //自动区分guard
+        $user = Auth::user();
         return $this->success(new AdminResource($user));
     }
 }

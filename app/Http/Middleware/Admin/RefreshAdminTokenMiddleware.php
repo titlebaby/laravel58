@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Middleware\Api;
+namespace App\Http\Middleware\Admin;
+
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
-// 注意，我们要继承的是 jwt 的 BaseMiddleware
-class RefreshTokenMiddleware extends BaseMiddleware
+
+class RefreshAdminTokenMiddleware extends BaseMiddleware
 {
     /**
      * Handle an incoming request.
@@ -20,7 +22,13 @@ class RefreshTokenMiddleware extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
-        //检查此次请求中是否带有token，如果没有则抛出异常
+
+
+       //检查此次请求中是否带有token，如果没有则抛出异常
+        //这个函数只会检测是否携带token以及token是否能被当前密钥所解析
+        /**
+         * 此方法不能解决前后token串的问题
+         */
         $this->checkForToken($request);
 
         /**
@@ -43,6 +51,7 @@ class RefreshTokenMiddleware extends BaseMiddleware
         //2. 此时进入的都是属于当前guard守护的token
         try{
             //检测用户的登陆状态，如果正常则通过
+            //将使用token进行登录，如果token过期，则抛出 TokenExpiredException 异常
             if($this->auth->parseToken()->authenticate()) {
                 return $next($request);
             }
@@ -55,8 +64,8 @@ class RefreshTokenMiddleware extends BaseMiddleware
                 $token = $this->auth->refresh();
                 //使用一次性登陆以保证此次请求成功
                 $sub = $this->auth->manager()->getPayloadFactory()
-                    ->buildClaimsCollection()
-                    ->toPlainArray()['sub'];
+                           ->buildClaimsCollection()
+                           ->toPlainArray()['sub'];
                 Auth::guard('api')->onceUsingId($sub);
             }catch (JWTException $exception) {
                 //如果捕获到此异常，即代表refresh也过期了，
@@ -67,4 +76,5 @@ class RefreshTokenMiddleware extends BaseMiddleware
         return $this->setAuthenticationHeader($next($request),$token);
         //return $next($request);
     }
+
 }

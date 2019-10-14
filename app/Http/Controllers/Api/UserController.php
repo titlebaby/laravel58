@@ -40,11 +40,21 @@ class UserController extends BaseController
     //用户登录
     public function login(Request $request)
     {
-        $token = Auth::guard('api')->attempt(
-            ['name' => $request->name,
-             'password' => $request->password
-            ]
-        );
+//        $token = Auth::guard('api')->attempt(
+//            ['name' => $request->name,
+//             'password' => $request->password
+//            ]
+//        );
+
+        //获取当前守护的名称
+        $present_guard =Auth::getDefaultDriver();
+        // token的载荷信息中加入标志
+        $token = Auth::claims(['guard'=>$present_guard])
+            ->attempt(
+                [
+                    'name' => $request->name,
+                    'password' => $request->password
+                ]);
 
         if ($token) {
            // return $this->success('用户登录成功...');
