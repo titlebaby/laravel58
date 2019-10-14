@@ -19,12 +19,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::namespace('Api')->prefix('v1')->middleware('cors')->group(function () {
     //Route::get('/users','UserController@index')->name('users.index');
-
-    Route::get('/users/info','UserController@info')->name('users.info');
-
-    Route::get('/users','UserController@index')->name('users.index');
-    Route::get('/users/{user}','UserController@show')->name('users.show');
-
     Route::post('/users','UserController@store')->name('users.store');
     Route::post('/login','UserController@login')->name('users.login');
+
+    Route::middleware('api.refresh')->group(function () {
+
+        Route::get('/users/info', 'UserController@info')->name('users.info');
+        Route::get('/users', 'UserController@index')->name('users.index');
+        Route::get('/users/{user}', 'UserController@show')->name('users.show');
+        //用户退出
+        Route::get('/logout','UserController@logout')->name('users.logout');
+    });
 });
